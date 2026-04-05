@@ -1,4 +1,4 @@
-release: v0.0.6
+release: v0.0.7
 
-- arch: amd64 + aarch64 only (armv7/i386 removed — not built by CI, would cause broken installs)
-- remove panel_admin (undocumented key in HA 2026 spec)
+- add icon.png (128x128) and logo.png (250x100) in dozzle/ — icon visible in HA add-on store
+- DOCS.md: logo at top, cleaner tables, 403 GHCR troubleshooting entry

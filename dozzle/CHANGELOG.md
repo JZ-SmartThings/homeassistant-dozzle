@@ -6,6 +6,13 @@ A copy also lives at the repository root: [`CHANGELOG.md`](../CHANGELOG.md).
 
 ---
 
+## 0.0.7 — 2026-04-05
+
+- **Fix:** add `icon.png` (128×128) and `logo.png` (250×100) — icon now visible in the HA add-on store.
+- **Docs:** `DOCS.md` rewritten — logo at top, cleaner option/port tables, 403 GHCR troubleshooting entry.
+
+---
+
 ## 0.0.6 — 2026-04-05
 
 - **Conformité HA 2026.4:** `arch` limité à `amd64` et `aarch64` (seules architectures construites par le CI — armv7/i386 retirés pour éviter des installations cassées).

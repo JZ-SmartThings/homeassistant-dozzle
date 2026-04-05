@@ -1,0 +1,29 @@
+network:
+  8080/tcp: "Optional direct access to the web UI (Ingress is the default)."
+  7007/tcp: "Dozzle agent — map only when Built-in agent is enabled."
+
+configuration:
+  log_level:
+    name: Log level
+    description: Verbosity of the Dozzle process in the add-on logs.
+  filter:
+    name: Docker filter
+    description: Optional Docker filter (same syntax as docker ps --filter).
+  no_analytics:
+    name: Disable anonymous analytics
+    description: Do not send usage data to Dozzle.
+  enable_actions:
+    name: Container actions
+    description: Allow restart/stop from the UI (use with care).
+  enable_agent:
+    name: Built-in agent
+    description: Runs “dozzle agent” so other Dozzle instances can attach to this host (map the agent host port when needed).
+  agent_port:
+    name: Agent port
+    description: Listen port for the agent (default 7007). Map it in the add-on network settings for external access.
+  agent_hostname:
+    name: Agent display name
+    description: Optional label for this agent in remote Dozzle UIs.
+  remote_agents:
+    name: Remote agents
+    description: Comma-separated host:port list to show containers from other hosts (e.g. 192.168.1.10:7007).

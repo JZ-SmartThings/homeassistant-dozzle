@@ -1,0 +1,29 @@
+network:
+  8080/tcp: "Accès direct optionnel à l’interface web (Ingress par défaut)."
+  7007/tcp: "Agent Dozzle — à mapper uniquement si « Agent intégré » est activé."
+
+configuration:
+  log_level:
+    name: Niveau de journalisation
+    description: Verbosité des logs du processus Dozzle côté add-on.
+  filter:
+    name: Filtre Docker
+    description: Filtre Docker optionnel (syntaxe identique à docker ps --filter).
+  no_analytics:
+    name: Désactiver les statistiques anonymes
+    description: N’envoie pas de données d’usage à Dozzle.
+  enable_actions:
+    name: Actions sur les conteneurs
+    description: Autorise redémarrage / arrêt depuis l’interface (à utiliser avec prudence).
+  enable_agent:
+    name: Agent intégré
+    description: Lance « dozzle agent » dans l’add-on pour que d’autres instances Dozzle puissent se connecter à cet hôte (mappez le port agent hôte si besoin).
+  agent_port:
+    name: Port de l’agent
+    description: Port d’écoute de l’agent (défaut 7007). À mapper dans l’onglet « Configuration » de l’add-on si accès depuis l’extérieur.
+  agent_hostname:
+    name: Nom affiché de l’agent
+    description: Libellé optionnel pour cet agent dans l’interface Dozzle distante.
+  remote_agents:
+    name: Agents distants
+    description: Liste host:port séparée par des virgules pour afficher des conteneurs d’autres machines (ex. 192.168.1.10:7007).

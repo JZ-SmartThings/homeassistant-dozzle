@@ -1,0 +1,87 @@
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers temporaires et sauvegardes
+*.bak
+*.swp
+*.swo
+*~
+*.tmp
+*.temp
+
+# Fichiers de logs
+*.log
+logs/
+log/
+
+# Fichiers de build et dépendances
+__pycache__/
+*.py[cod]
+*$py.class
+node_modules/
+dist/
+build/
+*.egg-info/
+
+# Fichiers de cache
+.cache/
+.npm/
+.yarn/
+
+# Fichiers de sauvegarde Home Assistant
+backup/
+backups/
+*.tar
+*.tar.gz
+*.zip
+
+# ---------------------------------------------------------------------------
+# Développement local (sources Dozzle, scripts de build, binaires)
+# ---------------------------------------------------------------------------
+make_bin/
+
+# ---------------------------------------------------------------------------
+# Archives / anciennes versions / copies de référence (non publiées)
+# ---------------------------------------------------------------------------
+Back/
+
+# ---------------------------------------------------------------------------
+# Exemples et dépôts de démo (référence uniquement, hors livrable app)
+# ---------------------------------------------------------------------------
+HA_mynetwork_exemple_fonctionnel/
+HA-addons-example/
+
+# ---------------------------------------------------------------------------
+# Fichiers sensibles (secrets, clés, environnement)
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt.local
+*.csr
+secrets/
+.secrets/
+**/credentials.json
+**/secrets.yaml
+auth.json
+.token
+*.token
+.npmrc
+.yarnrc.yml
+.netrc
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+*.kdbx
+.ssh/
+
+# Fichiers de configuration locaux
+.gitignore.local
+Aide*

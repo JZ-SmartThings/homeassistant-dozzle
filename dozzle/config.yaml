@@ -1,0 +1,72 @@
+# Manifest Home Assistant « App » (ex add-on), doc officielle avril 2026 :
+# https://developers.home-assistant.io/docs/apps/configuration
+# Ne pas utiliser la clé `advanced` (dépréciée Supervisor 2026.03.0).
+name: "Dozzle"
+version: "0.0.1"
+slug: "dozzle"
+description: "Visionneur de logs Docker en temps réel (Ingress, agent optionnel)"
+# Page du projet (support / source de l’app packagée pour HA)
+url: "https://github.com/Erreur32/homeassistant-dozzle"
+
+# Image multi-arch publiée par GitHub Actions (GHCR), alignée sur le nom du dépôt.
+# Build local sans pull : retirez cette ligne dans une copie du dépôt.
+image: ghcr.io/erreur32/homeassistant-dozzle
+
+arch:
+  - amd64
+  - aarch64
+  - armv7
+  - i386
+
+startup: services
+init: false
+boot: auto
+
+# AppArmor : désactivé — accès API Docker / socket ; un profil sur mesure serait nécessaire sinon
+apparmor: false
+
+ingress: true
+ingress_port: 8080
+ingress_entry: /
+ingress_stream: true
+
+panel_title: "Dozzle"
+panel_icon: "mdi:text-box-search-outline"
+panel_admin: true
+
+watchdog: "http://[HOST]:[PORT:8080]/"
+
+ports:
+  8080/tcp: null
+  7007/tcp: null
+ports_description:
+  8080/tcp: "Interface web (accès direct optionnel)"
+  7007/tcp: "Agent Dozzle — mapper seulement si « Agent intégré » est activé"
+
+docker_api: true
+hassio_api: true
+auth_api: true
+homeassistant_api: false
+
+options:
+  log_level: info
+  filter: ""
+  no_analytics: true
+  enable_actions: false
+  enable_agent: false
+  agent_port: 7007
+  agent_hostname: ""
+  remote_agents: ""
+
+schema:
+  log_level: list(trace|debug|info|warn|error|fatal)
+  filter: str?
+  no_analytics: bool
+  enable_actions: bool
+  enable_agent: bool
+  agent_port: port?
+  agent_hostname: str?
+  remote_agents: str?
+
+# stable : visible dans le catalogue sans dépendre du mode « avancé » (en transition côté Supervisor)
+stage: stable

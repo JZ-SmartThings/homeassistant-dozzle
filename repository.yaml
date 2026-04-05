@@ -1,0 +1,4 @@
+# Dépôt d’apps Home Assistant (Settings → Apps). Dossier de l’app : dozzle/
+name: "HA Dozzle"
+url: "https://github.com/Erreur32/homeassistant-dozzle"
+maintainer: "Erreur32"

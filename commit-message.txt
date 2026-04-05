@@ -1,4 +1,3 @@
-release: v0.0.7
+release: v0.0.8
 
-- add icon.png (128x128) and logo.png (250x100) in dozzle/ — icon visible in HA add-on store
-- DOCS.md: logo at top, cleaner tables, 403 GHCR troubleshooting entry
+- fix: ARG BUILD_FROM moved before first FROM (global Docker scope) — fixes "base name should not be blank" CI build error

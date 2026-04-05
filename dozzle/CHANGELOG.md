@@ -6,6 +6,12 @@ A copy also lives at the repository root: [`CHANGELOG.md`](../CHANGELOG.md).
 
 ---
 
+## 0.0.8 — 2026-04-05
+
+- **Fix build:** `ARG BUILD_FROM` déplacé avant le premier `FROM` (scope global Docker) — corrige l'erreur `base name should not be blank` lors du build CI.
+
+---
+
 ## 0.0.7 — 2026-04-05
 
 - **Fix:** add `icon.png` (128×128) and `logo.png` (250×100) — icon now visible in the HA add-on store.

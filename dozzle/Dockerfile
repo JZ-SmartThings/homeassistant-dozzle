@@ -10,7 +10,7 @@ FROM amir20/dozzle:${DOZZLE_VERSION} AS dozzle_upstream
 
 FROM ${BUILD_FROM}
 
-ARG BUILD_VERSION=0.0.7
+ARG BUILD_VERSION=0.0.8
 ARG BUILD_ARCH=amd64
 
 RUN apk add --no-cache jq curl

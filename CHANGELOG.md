@@ -6,7 +6,7 @@ All notable changes to this repository ([homeassistant-dozzle](https://github.co
 
 ## 0.0.8 — 2026-04-05
 
-- **Fix build:** `ARG BUILD_FROM` déplacé avant le premier `FROM` (scope global Docker) — corrige l'erreur `base name should not be blank` lors du build CI.
+- **Fix build:** move `ARG BUILD_FROM` before the first `FROM` (global Docker scope) — fixes `base name should not be blank` CI build error.
 
 ---
 
@@ -19,8 +19,8 @@ All notable changes to this repository ([homeassistant-dozzle](https://github.co
 
 ## 0.0.6 — 2026-04-05
 
-- **Conformité HA 2026.4:** `arch` limité à `amd64` et `aarch64` (seules architectures construites par le CI — armv7/i386 retirés pour éviter des installations cassées).
-- **Conformité HA 2026.4:** `panel_admin` retiré de `config.yaml` (clé non documentée dans la spec 2026, ignorée/supprimée par le Supervisor).
+- **HA 2026.4 compliance:** `arch` limited to `amd64` and `aarch64` (only architectures built by CI — armv7/i386 removed to prevent broken installs).
+- **HA 2026.4 compliance:** remove `panel_admin` from `config.yaml` (undocumented key in the 2026 spec, ignored/dropped by the Supervisor).
 
 ---
 

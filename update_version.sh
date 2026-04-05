@@ -178,23 +178,23 @@ if [ "$NEW" != "$CURRENT" ]; then
 
   echo ""
   echo -e "  ${B}── commit-message.txt ──${R}"
-  # Toujours un message de commit utilisable avec -F (évite le fallback générique)
+  # Always ensure a usable commit message for -F (avoids the generic fallback)
   if [ ! -f "$COMMIT_MSG_FILE" ]; then
     cat > "$COMMIT_MSG_FILE" << CMEOF
 release: v${NEW}
 
 - Version ${NEW}
 CMEOF
-    echo -e "  ${G}✓${R} commit-message.txt        ${C}(créé — release: v${NEW})${R}"
+    echo -e "  ${G}✓${R} commit-message.txt        ${C}(created — release: v${NEW})${R}"
   elif ! grep -qE "v${NEW}|release:.*${NEW}" "$COMMIT_MSG_FILE" 2>/dev/null; then
     {
       echo "release: v${NEW}"
       echo ""
       cat "$COMMIT_MSG_FILE"
     } > "${COMMIT_MSG_FILE}.tmp" && mv "${COMMIT_MSG_FILE}.tmp" "$COMMIT_MSG_FILE"
-    echo -e "  ${G}✓${R} commit-message.txt        ${C}(ligne release: v${NEW} ajoutée en tête)${R}"
+    echo -e "  ${G}✓${R} commit-message.txt        ${C}(release: v${NEW} prepended)${R}"
   else
-    echo -e "  ${G}✓${R} commit-message.txt        ${C}(déjà à jour pour v${NEW})${R}"
+    echo -e "  ${G}✓${R} commit-message.txt        ${C}(already up to date for v${NEW})${R}"
   fi
 
   echo ""
@@ -213,95 +213,95 @@ do_commit_tag_push() {
   local branch
 
   if ! command -v git >/dev/null 2>&1; then
-    echo -e "${RED}Erreur :${R} la commande ${C}git${R} est introuvable (PATH)."
-    echo -e "  Installez Git ou ouvrez un terminal où Git est disponible."
+    echo -e "${RED}Error:${R} ${C}git${R} command not found (PATH)."
+    echo -e "  Install Git or open a terminal where Git is available."
     return 1
   fi
 
   if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    echo -e "${RED}Erreur :${R} ce dossier n’est pas un dépôt Git (pas de ${C}.git${R} à cet endroit)."
-    echo -e "  ${Y}Cause fréquente :${R} copie sur NAS / partage sans historique, ou script hors racine du clone."
-    echo -e "  ${Y}Pistes :${R}"
-    echo -e "    • ${C}git clone <url>${R} le dépôt puis relancer le script dans le clone."
-    echo -e "    • Ou ${C}git init${R} à la racine du projet, ${C}git remote add origin …${R}, puis premier commit."
-    echo -e "  Répertoire utilisé : ${C}$(pwd)${R}"
+    echo -e "${RED}Error:${R} this folder is not a Git repository (no ${C}.git${R} found here)."
+    echo -e "  ${Y}Common cause:${R} copy on NAS / share without history, or script run outside the clone root."
+    echo -e "  ${Y}Suggestions:${R}"
+    echo -e "    • ${C}git clone <url>${R} the repository then re-run the script inside the clone."
+    echo -e "    • Or ${C}git init${R} at the project root, ${C}git remote add origin …${R}, then first commit."
+    echo -e "  Current directory: ${C}$(pwd)${R}"
     return 1
   fi
 
   branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)
   if [ "$branch" = "HEAD" ]; then
-    echo -e "${RED}Erreur :${R} HEAD détaché — placez-vous sur une branche avant le push."
-    echo -e "  Exemple : ${C}git checkout main${R} ou ${C}git switch main${R}"
+    echo -e "${RED}Error:${R} detached HEAD — switch to a branch before pushing."
+    echo -e "  Example: ${C}git checkout main${R} or ${C}git switch main${R}"
     return 1
   fi
   if [ -z "$branch" ]; then
-    echo -e "${RED}Erreur :${R} impossible de lire la branche courante (${C}git rev-parse${R})."
+    echo -e "${RED}Error:${R} could not read current branch (${C}git rev-parse${R})."
     return 1
   fi
 
   local tag_name="v${NEW}"
 
-  # Message de commit : si bump sans --tag-push puis tag-push plus tard, fichier peut manquer vNEW
+  # Commit message: if bumped without --tag-push and tag-push is run later, file may be missing vNEW
   if [ -f "$COMMIT_MSG_FILE" ] && ! grep -qE "v${NEW}|release:.*${NEW}" "$COMMIT_MSG_FILE" 2>/dev/null; then
     {
       echo "release: v${NEW}"
       echo ""
       cat "$COMMIT_MSG_FILE"
     } > "${COMMIT_MSG_FILE}.tmp" && mv "${COMMIT_MSG_FILE}.tmp" "$COMMIT_MSG_FILE"
-    echo -e "  ${G}✓${R} commit-message.txt        ${C}(complété pour v${NEW})${R}"
+    echo -e "  ${G}✓${R} commit-message.txt        ${C}(updated for v${NEW})${R}"
   fi
 
   if [ -n "$(git status --porcelain 2>/dev/null)" ]; then
-    echo -e "  ${B}Modifications non commitées — git add / commit...${R}"
+    echo -e "  ${B}Uncommitted changes — git add / commit...${R}"
     git add -A
     if [ -f "$COMMIT_MSG_FILE" ] && grep -qE "v${NEW}|release:.*${NEW}" "$COMMIT_MSG_FILE" 2>/dev/null; then
-      git commit -F "$COMMIT_MSG_FILE" || { echo -e "${RED}Échec du commit.${R}"; return 1; }
-      echo -e "  ${G}✓${R} Commit avec ${C}commit-message.txt${R}"
+      git commit -F "$COMMIT_MSG_FILE" || { echo -e "${RED}Commit failed.${R}"; return 1; }
+      echo -e "  ${G}✓${R} Committed with ${C}commit-message.txt${R}"
     else
-      git commit -m "release: v${NEW}" || { echo -e "${RED}Échec du commit.${R}"; return 1; }
-      echo -e "  ${G}✓${R} Commit ${C}release: v${NEW}${R}"
+      git commit -m "release: v${NEW}" || { echo -e "${RED}Commit failed.${R}"; return 1; }
+      echo -e "  ${G}✓${R} Committed ${C}release: v${NEW}${R}"
     fi
     echo ""
   else
-    echo -e "  ${G}✓${R} Arbre de travail propre — pas de nouveau commit."
+    echo -e "  ${G}✓${R} Working tree clean — no new commit."
     echo ""
   fi
 
   if git rev-parse "$tag_name" >/dev/null 2>&1; then
-    echo -e "  ${Y}⚠${R} Tag ${C}${tag_name}${R} existe déjà en local."
+    echo -e "  ${Y}⚠${R} Tag ${C}${tag_name}${R} already exists locally."
   else
-    git tag -a "$tag_name" -m "Release ${tag_name}" || { echo -e "${RED}Échec du tag.${R}"; return 1; }
-    echo -e "  ${G}✓${R} Tag ${C}${tag_name}${R} créé."
+    git tag -a "$tag_name" -m "Release ${tag_name}" || { echo -e "${RED}Tag failed.${R}"; return 1; }
+    echo -e "  ${G}✓${R} Tag ${C}${tag_name}${R} created."
   fi
 
-  # Synchroniser avec origin avant push (évite « fetch first » / non-fast-forward)
+  # Sync with origin before push (avoids "fetch first" / non-fast-forward)
   if git remote get-url origin >/dev/null 2>&1; then
-    echo -e "  ${B}Synchronisation avec origin...${R}"
+    echo -e "  ${B}Syncing with origin...${R}"
     git fetch origin || true
     if git show-ref --verify --quiet "refs/remotes/origin/${branch}" 2>/dev/null; then
       if ! git merge-base --is-ancestor "origin/${branch}" HEAD 2>/dev/null; then
-        echo -e "  ${Y}→${R} La branche distante a des commits en avance — ${C}git pull --rebase origin ${branch}${R}"
+        echo -e "  ${Y}→${R} Remote branch has new commits — ${C}git pull --rebase origin ${branch}${R}"
         git pull --rebase origin "$branch" || {
-          echo -e "${RED}Rebase interrompu (conflits ?).${R} Résolvez puis : ${C}git rebase --continue${R}"
+          echo -e "${RED}Rebase interrupted (conflicts?).${R} Resolve then: ${C}git rebase --continue${R}"
           return 1
         }
       fi
     fi
   fi
 
-  echo -e "  ${B}Push branche ${C}${branch}${R} + tag ${C}${tag_name}${R}...${R}"
+  echo -e "  ${B}Pushing branch ${C}${branch}${R} + tag ${C}${tag_name}${R}...${R}"
   if ! git push origin "$branch" "$tag_name"; then
-    echo -e "  ${Y}→${R} Push refusé — nouvelle tentative après rebase..."
+    echo -e "  ${Y}→${R} Push rejected — retrying after rebase..."
     git fetch origin
     if git show-ref --verify --quiet "refs/remotes/origin/${branch}" 2>/dev/null; then
       git pull --rebase origin "$branch" || {
-        echo -e "${RED}Rebase échoué.${R}"
+        echo -e "${RED}Rebase failed.${R}"
         return 1
       }
     fi
-    git push origin "$branch" "$tag_name" || { echo -e "${RED}Push échoué.${R}"; return 1; }
+    git push origin "$branch" "$tag_name" || { echo -e "${RED}Push failed.${R}"; return 1; }
   fi
-  echo -e "  ${G}✓${R} Branche + tag poussés."
+  echo -e "  ${G}✓${R} Branch + tag pushed."
   echo ""
   echo -e "  ${G}✓${R} Done."
   return 0

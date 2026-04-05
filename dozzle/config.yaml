@@ -1,15 +1,15 @@
-# Manifest Home Assistant « App » (ex add-on), doc officielle avril 2026 :
+# Home Assistant App manifest — official docs April 2026:
 # https://developers.home-assistant.io/docs/apps/configuration
-# Ne pas utiliser la clé `advanced` (dépréciée Supervisor 2026.03.0).
+# Do not use the `advanced` key (deprecated since Supervisor 2026.03.0).
 name: "Dozzle"
 version: "0.0.8"
 slug: "dozzle"
-description: "Visionneur de logs Docker en temps réel (Ingress, agent optionnel)"
-# Page du projet (support / source de l’app packagée pour HA)
+description: "Real-time Docker log viewer (Ingress, optional agent)"
+# Project page (support / source of the packaged app for HA)
 url: "https://github.com/Erreur32/homeassistant-dozzle"
 
-# Image multi-arch publiée par GitHub Actions (GHCR), alignée sur le nom du dépôt.
-# Build local sans pull : retirez cette ligne dans une copie du dépôt.
+# Multi-arch image published by GitHub Actions (GHCR), aligned with the repository name.
+# For a local build without pulling: remove this line from a copy of the repository.
 image: ghcr.io/erreur32/homeassistant-dozzle
 
 arch:
@@ -20,7 +20,7 @@ startup: services
 init: false
 boot: auto
 
-# AppArmor : désactivé — accès API Docker / socket ; un profil sur mesure serait nécessaire sinon
+# AppArmor: disabled — Docker API / socket access; a custom profile would be required otherwise
 apparmor: false
 
 ingress: true
@@ -37,8 +37,8 @@ ports:
   8080/tcp: null
   7007/tcp: null
 ports_description:
-  8080/tcp: "Interface web (accès direct optionnel)"
-  7007/tcp: "Agent Dozzle — mapper seulement si « Agent intégré » est activé"
+  8080/tcp: "Web UI (optional direct access)"
+  7007/tcp: "Dozzle agent — map only if the built-in agent is enabled"
 
 docker_api: true
 hassio_api: true
@@ -65,5 +65,5 @@ schema:
   agent_hostname: str?
   remote_agents: str?
 
-# stable : visible dans le catalogue sans dépendre du mode « avancé » (en transition côté Supervisor)
+# stable: visible in the catalogue without requiring advanced mode (transitioning in Supervisor)
 stage: stable

@@ -2,6 +2,7 @@ name: Builder
 
 env:
   MONITORED_FILES: "config.json config.yaml config.yml Dockerfile rootfs"
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 on:
   pull_request:

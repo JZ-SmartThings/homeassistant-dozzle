@@ -1,3 +1,4 @@
-release: v0.0.8
+release: v0.0.9
 
-- fix: ARG BUILD_FROM moved before first FROM (global Docker scope) — fixes "base name should not be blank" CI build error
+- fix CI: actions/checkout@v4 (v6.0.2 did not exist — init job was silently failing, image was never pushed to GHCR)
+- builder triggers on v* tags

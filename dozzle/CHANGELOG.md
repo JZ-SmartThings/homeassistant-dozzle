@@ -6,6 +6,13 @@ A copy also lives at the repository root: [`CHANGELOG.md`](../CHANGELOG.md).
 
 ---
 
+## 0.0.9 — 2026-04-05
+
+- **Fix CI:** replace `actions/checkout@v6.0.2` (non-existent) with `actions/checkout@v4` — init job was silently failing, build/push jobs were never executed.
+- **CI:** builder now triggers on `v*` tags in addition to pushes to `main`.
+
+---
+
 ## 0.0.8 — 2026-04-05
 
 - **Fix build:** move `ARG BUILD_FROM` before the first `FROM` (global Docker scope) — fixes `base name should not be blank` CI build error.

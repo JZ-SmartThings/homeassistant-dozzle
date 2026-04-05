@@ -42,7 +42,7 @@ DOZZLE_BASE_PATH="/"
 bashio::log.info "Ingress entry (external): ${INGRESS_ENTRY}"
 bashio::log.info "Dozzle base path (container): ${DOZZLE_BASE_PATH}"
 
-DOZZLE_ADDR=":8080"
+DOZZLE_ADDR=":8081"  # nginx listens on :8080 and proxies here
 
 # --- Read options from HA config ---------------------------------------------
 LOG_LEVEL="$(bashio::config 'log_level' 'info')"
@@ -78,7 +78,7 @@ fi
 
 # --- Export env vars used by Dozzle ------------------------------------------
 export DOZZLE_BASE="${DOZZLE_BASE_PATH}"
-export DOZZLE_ADDR="${DOZZLE_ADDR}"
+export DOZZLE_ADDR="${DOZZLE_ADDR}"  # nginx :8080 → Dozzle :8081
 export DOZZLE_LEVEL="${LOG_LEVEL}"
 export DOZZLE_AUTH_PROVIDER="none"
 

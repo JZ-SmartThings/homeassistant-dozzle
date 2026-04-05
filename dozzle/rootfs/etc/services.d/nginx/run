@@ -1,0 +1,11 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# nginx — reverse proxy in front of Dozzle
+# Listens on :8080 (Ingress-facing), forwards to Dozzle on :8081.
+# Patches HTML responses so the SPA loads correctly through HA Ingress:
+#   • /assets/ → ./assets/   (absolute → relative paths)
+#   • JS shim injected in <head> (rewrites fetch/XHR/WebSocket at runtime)
+# ==============================================================================
+
+bashio::log.info "nginx: starting on :8080 (→ Dozzle :8081)"
+exec nginx -g 'daemon off;'

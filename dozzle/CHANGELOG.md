@@ -6,6 +6,16 @@ A copy also lives at the repository root: [`CHANGELOG.md`](../CHANGELOG.md).
 
 ---
 
+## 0.1.2 — 2026-04-05
+
+- **Fix Ingress blank page:** add nginx reverse proxy in front of Dozzle.
+  Dozzle now listens on `:8081` (internal); nginx on `:8080` patches HTML responses:
+  - Replaces absolute asset paths (`="/assets/`) with relative ones (`="./assets/`) so the browser resolves them through the Ingress URL instead of the HA root.
+  - Injects a small JavaScript shim before `</head>` that rewrites `fetch()`, `XMLHttpRequest`, `WebSocket`, and `history.pushState` calls at runtime so all absolute API paths are transparently prefixed with the Ingress base path.
+  - SSE log-streaming endpoints (`/api/*`) bypass buffering (`proxy_buffering off`) to preserve real-time delivery.
+
+---
+
 ## 0.1.1 — 2026-04-05
 
 - **Security:** enable AppArmor profile (`apparmor.txt`) — was `false`, now restricts filesystem, capabilities and network access; improves HA security badge score.

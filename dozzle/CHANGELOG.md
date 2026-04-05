@@ -6,6 +6,13 @@ A copy also lives at the repository root: [`CHANGELOG.md`](../CHANGELOG.md).
 
 ---
 
+## 0.1.0 — 2026-04-05
+
+- **Fix build:** Dozzle upstream image tag corrected to `v10.2.1` (tags use `v` prefix; `10.0.6` did not exist on Docker Hub).
+- **Bundled Dozzle:** upgraded from `10.0.6` → `v10.2.1`.
+
+---
+
 ## 0.0.9 — 2026-04-05
 
 - **Fix CI:** replace `actions/checkout@v6.0.2` (non-existent) with `actions/checkout@v4` — init job was silently failing, build/push jobs were never executed.

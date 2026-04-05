@@ -4,13 +4,13 @@
 
 # Global ARGs — must be declared before any FROM to be usable in FROM instructions
 ARG BUILD_FROM=ghcr.io/home-assistant/base:3.23
-ARG DOZZLE_VERSION=10.0.6
+ARG DOZZLE_VERSION=v10.2.1
 
 FROM amir20/dozzle:${DOZZLE_VERSION} AS dozzle_upstream
 
 FROM ${BUILD_FROM}
 
-ARG BUILD_VERSION=0.0.9
+ARG BUILD_VERSION=0.1.0
 ARG BUILD_ARCH=amd64
 
 RUN apk add --no-cache jq curl

@@ -1,4 +1,3 @@
-release: v0.0.9
+release: v0.1.0
 
-- fix CI: actions/checkout@v4 (v6.0.2 did not exist — init job was silently failing, image was never pushed to GHCR)
-- builder triggers on v* tags
+- fix: Dozzle upstream tag v10.2.1 (was 10.0.6 without v prefix — image not found on Docker Hub)

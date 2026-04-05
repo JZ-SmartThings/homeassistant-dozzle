@@ -16,7 +16,9 @@
 #   5. commit-message.txt     — git commit -F commit-message.txt
 #
 # Options:
-#   --tag-push   After bump: commit (if dirty), create tag v<NEW>, push branch & tag.
+#   --tag-push   Après bump : commit (si fichiers modifiés), tag v<NEW>, puis
+#                fetch + rebase sur origin/<branche> si besoin, push branche et tag.
+#                commit-message.txt est complété avec « release: v<NEW> » si besoin.
 #
 # Not auto-updated (do manually):
 #   - dozzle/CHANGELOG.md
@@ -157,20 +159,23 @@ if [ "$NEW" != "$CURRENT" ]; then
 
   echo ""
   echo -e "  ${B}── commit-message.txt ──${R}"
-  if [ -f "$COMMIT_MSG_FILE" ]; then
-    if grep -qE "v${NEW}|${NEW}" "$COMMIT_MSG_FILE" 2>/dev/null; then
-      echo -e "  ${G}✓${R} commit-message.txt        ${C}(mentions v${NEW})${R}"
-    else
-      echo -e "  ${Y}⚠${R} commit-message.txt        ${Y}(update for v${NEW})${R}"
-    fi
-  else
+  # Toujours un message de commit utilisable avec -F (évite le fallback générique)
+  if [ ! -f "$COMMIT_MSG_FILE" ]; then
     cat > "$COMMIT_MSG_FILE" << CMEOF
 release: v${NEW}
 
-- <change 1>
-- <change 2>
+- Version ${NEW}
 CMEOF
-    echo -e "  ${G}✓${R} commit-message.txt        ${C}(template — edit before commit)${R}"
+    echo -e "  ${G}✓${R} commit-message.txt        ${C}(créé — release: v${NEW})${R}"
+  elif ! grep -qE "v${NEW}|release:.*${NEW}" "$COMMIT_MSG_FILE" 2>/dev/null; then
+    {
+      echo "release: v${NEW}"
+      echo ""
+      cat "$COMMIT_MSG_FILE"
+    } > "${COMMIT_MSG_FILE}.tmp" && mv "${COMMIT_MSG_FILE}.tmp" "$COMMIT_MSG_FILE"
+    echo -e "  ${G}✓${R} commit-message.txt        ${C}(ligne release: v${NEW} ajoutée en tête)${R}"
+  else
+    echo -e "  ${G}✓${R} commit-message.txt        ${C}(déjà à jour pour v${NEW})${R}"
   fi
 
   echo ""
@@ -217,38 +222,73 @@ do_commit_tag_push() {
 
   local tag_name="v${NEW}"
 
+  # Message de commit : si bump sans --tag-push puis tag-push plus tard, fichier peut manquer vNEW
+  if [ -f "$COMMIT_MSG_FILE" ] && ! grep -qE "v${NEW}|release:.*${NEW}" "$COMMIT_MSG_FILE" 2>/dev/null; then
+    {
+      echo "release: v${NEW}"
+      echo ""
+      cat "$COMMIT_MSG_FILE"
+    } > "${COMMIT_MSG_FILE}.tmp" && mv "${COMMIT_MSG_FILE}.tmp" "$COMMIT_MSG_FILE"
+    echo -e "  ${G}✓${R} commit-message.txt        ${C}(complété pour v${NEW})${R}"
+  fi
+
   if [ -n "$(git status --porcelain 2>/dev/null)" ]; then
-    echo -e "  ${B}Uncommitted changes — staging and commit...${R}"
+    echo -e "  ${B}Modifications non commitées — git add / commit...${R}"
     git add -A
-    if [ -f "$COMMIT_MSG_FILE" ] && grep -qE "v${NEW}|${NEW}" "$COMMIT_MSG_FILE" 2>/dev/null; then
-      git commit -F "$COMMIT_MSG_FILE" || { echo -e "${RED}Commit failed.${R}"; return 1; }
-      echo -e "  ${G}✓${R} Committed with ${C}commit-message.txt${R}"
+    if [ -f "$COMMIT_MSG_FILE" ] && grep -qE "v${NEW}|release:.*${NEW}" "$COMMIT_MSG_FILE" 2>/dev/null; then
+      git commit -F "$COMMIT_MSG_FILE" || { echo -e "${RED}Échec du commit.${R}"; return 1; }
+      echo -e "  ${G}✓${R} Commit avec ${C}commit-message.txt${R}"
     else
-      git commit -m "release: v${NEW}" || { echo -e "${RED}Commit failed.${R}"; return 1; }
-      echo -e "  ${G}✓${R} Committed ${C}release: v${NEW}${R} ${Y}(fallback — fix commit-message.txt next time)${R}"
+      git commit -m "release: v${NEW}" || { echo -e "${RED}Échec du commit.${R}"; return 1; }
+      echo -e "  ${G}✓${R} Commit ${C}release: v${NEW}${R}"
     fi
     echo ""
   else
-    echo -e "  ${G}✓${R} Working tree clean — no commit."
+    echo -e "  ${G}✓${R} Arbre de travail propre — pas de nouveau commit."
     echo ""
   fi
 
   if git rev-parse "$tag_name" >/dev/null 2>&1; then
-    echo -e "  ${Y}⚠${R} Tag ${C}${tag_name}${R} exists locally."
+    echo -e "  ${Y}⚠${R} Tag ${C}${tag_name}${R} existe déjà en local."
   else
-    git tag -a "$tag_name" -m "Release ${tag_name}" || { echo -e "${RED}Tag failed.${R}"; return 1; }
-    echo -e "  ${G}✓${R} Tag ${C}${tag_name}${R} created."
+    git tag -a "$tag_name" -m "Release ${tag_name}" || { echo -e "${RED}Échec du tag.${R}"; return 1; }
+    echo -e "  ${G}✓${R} Tag ${C}${tag_name}${R} créé."
   fi
 
-  echo -e "  ${B}Pushing branch ${C}${branch}${R}...${R}"
-  git push origin "$branch" || { echo -e "${RED}Push branch failed.${R}"; return 1; }
-  echo -e "  ${G}✓${R} Branch pushed."
+  # Synchroniser avec origin avant push (évite « fetch first » / non-fast-forward)
+  if git remote get-url origin >/dev/null 2>&1; then
+    echo -e "  ${B}Synchronisation avec origin...${R}"
+    git fetch origin || true
+    if git show-ref --verify --quiet "refs/remotes/origin/${branch}" 2>/dev/null; then
+      if ! git merge-base --is-ancestor "origin/${branch}" HEAD 2>/dev/null; then
+        echo -e "  ${Y}→${R} La branche distante a des commits en avance — ${C}git pull --rebase origin ${branch}${R}"
+        git pull --rebase origin "$branch" || {
+          echo -e "${RED}Rebase interrompu (conflits ?).${R} Résolvez puis : ${C}git rebase --continue${R}"
+          return 1
+        }
+      fi
+    fi
+  fi
+
+  echo -e "  ${B}Push de la branche ${C}${branch}${R}...${R}"
+  if ! git push origin "$branch"; then
+    echo -e "  ${Y}→${R} Push refusé — nouvelle tentative après rebase..."
+    git fetch origin
+    if git show-ref --verify --quiet "refs/remotes/origin/${branch}" 2>/dev/null; then
+      git pull --rebase origin "$branch" || {
+        echo -e "${RED}Rebase échoué.${R}"
+        return 1
+      }
+    fi
+    git push origin "$branch" || { echo -e "${RED}Push de la branche échoué.${R}"; return 1; }
+  fi
+  echo -e "  ${G}✓${R} Branche poussée."
 
   if git ls-remote origin "refs/tags/${tag_name}" 2>/dev/null | grep -q .; then
-    echo -e "  ${Y}○${R} Tag ${C}${tag_name}${R} already on remote — skip."
+    echo -e "  ${Y}○${R} Tag ${C}${tag_name}${R} déjà sur le remote — ignoré."
   else
-    git push origin "$tag_name" || { echo -e "${RED}Push tag failed.${R}"; return 1; }
-    echo -e "  ${G}✓${R} Tag ${C}${tag_name}${R} pushed."
+    git push origin "$tag_name" || { echo -e "${RED}Push du tag échoué.${R}"; return 1; }
+    echo -e "  ${G}✓${R} Tag ${C}${tag_name}${R} poussé."
   fi
   echo ""
   echo -e "  ${G}✓${R} Done."

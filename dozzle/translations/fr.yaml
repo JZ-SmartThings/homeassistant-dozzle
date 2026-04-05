@@ -1,6 +1,7 @@
 network:
-  8080/tcp: "Accès direct optionnel à l’interface web (Ingress par défaut)."
+  8080/tcp: "Proxy ingress - ne pas mapper directement, utilisez le port 8088 pour l’accès externe."
   7007/tcp: "Agent Dozzle - à mapper uniquement si « Agent intégré » est activé."
+  8088/tcp: "Accès direct - à mapper quand l’option « Accès direct » est activée."
 
 configuration:
   log_level:
@@ -27,3 +28,6 @@ configuration:
   remote_agents:
     name: Agents distants
     description: Liste host:port séparée par des virgules pour afficher des conteneurs d’autres machines (ex. 192.168.1.10:7007).
+  enable_direct_access:
+    name: Accès direct (port 8088)
+    description: Expose Dozzle sur le port 8088 sans le préfixe token Ingress, accessible via http://ip-ha:8088/. Mappez le port 8088 dans l’onglet Réseau. Ingress continue de fonctionner normalement en parallèle.

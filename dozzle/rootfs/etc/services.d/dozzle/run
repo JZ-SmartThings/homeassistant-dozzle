@@ -19,6 +19,7 @@ declare INGRESS_ENTRY
 declare REMOTE_AGENTS
 declare ENABLE_AGENT
 declare AGENT_HOSTNAME
+declare ENABLE_DIRECT_ACCESS
 
 # --- Docker socket (docker_api: true in config.yaml) -------------------------
 if [ -S /var/run/docker.sock ]; then
@@ -49,6 +50,7 @@ ENABLE_ACTIONS="$(bashio::config 'enable_actions' 'false')"
 ENABLE_AGENT="$(bashio::config 'enable_agent' 'false')"
 AGENT_HOSTNAME="$(bashio::config 'agent_hostname' '')"
 REMOTE_AGENTS="$(bashio::config 'remote_agents' '')"
+ENABLE_DIRECT_ACCESS="$(bashio::config 'enable_direct_access' 'false')"
 
 # --- Build Dozzle argument list ----------------------------------------------
 DOZZLE_ARGS=(
@@ -84,6 +86,35 @@ if bashio::var.has_value "${REMOTE_AGENTS}"; then
     export DOZZLE_REMOTE_AGENT="${REMOTE_AGENTS}"
 fi
 
+# --- Direct access instance (optional, port 8082 → nginx 8088) ---------------
+# Runs a second Dozzle with --base / so browsers can access it directly
+# without the ingress token prefix. nginx serves it on port 8088.
+# Security: only activated when enable_direct_access is true in config.
+if bashio::var.true "${ENABLE_DIRECT_ACCESS}"; then
+    bashio::log.info "Starting direct-access Dozzle on :8082 (nginx will serve on :8088)"
+    declare -a DIRECT_ARGS=(
+        "--addr"          ":8082"
+        "--base"          "/"
+        "--level"         "${LOG_LEVEL}"
+        "--auth-provider" "none"
+    )
+    if bashio::var.true "${NO_ANALYTICS}"; then
+        DIRECT_ARGS+=("--no-analytics")
+    fi
+    if bashio::var.has_value "${FILTER}"; then
+        DIRECT_ARGS+=("--filter" "${FILTER}")
+    fi
+    if bashio::var.true "${ENABLE_ACTIONS}"; then
+        DIRECT_ARGS+=("--enable-actions")
+    fi
+    if bashio::var.has_value "${REMOTE_AGENTS}"; then
+        DOZZLE_REMOTE_AGENT="${REMOTE_AGENTS}" \
+            /usr/local/bin/dozzle "${DIRECT_ARGS[@]}" &
+    else
+        /usr/local/bin/dozzle "${DIRECT_ARGS[@]}" &
+    fi
+fi
+
 # --- Built-in agent (optional, port 7007) ------------------------------------
 # This exposes HA's Docker to OTHER Dozzle instances on your network.
 # Map port 7007 in the Network tab to make it reachable from outside.
@@ -114,6 +145,7 @@ bashio::log.info "  Filter       : ${FILTER:-none}"
 bashio::log.info "  Actions      : ${ENABLE_ACTIONS}"
 bashio::log.info "  Agent        : ${ENABLE_AGENT} (port 7007, name: ${AGENT_HOSTNAME:-default})"
 bashio::log.info "  Remote agents: ${REMOTE_AGENTS:-none}"
+bashio::log.info "  Direct access: ${ENABLE_DIRECT_ACCESS} (port 8088, map in Network tab)"
 bashio::log.info "================================================"
 
 exec /usr/local/bin/dozzle "${DOZZLE_ARGS[@]}"

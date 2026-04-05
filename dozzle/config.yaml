@@ -2,7 +2,7 @@
 # https://developers.home-assistant.io/docs/apps/configuration
 # Do not use the `advanced` key (deprecated since Supervisor 2026.03.0).
 name: "Dozzle"
-version: "0.1.9"
+version: "0.2.0"
 slug: "dozzle"
 description: "Real-time Docker log viewer (Ingress, optional agent)"
 # Project page (support / source of the packaged app for HA)
@@ -36,9 +36,11 @@ watchdog: "http://[HOST]:[PORT:8080]/"
 ports:
   8080/tcp: null
   7007/tcp: null
+  8088/tcp: null
 ports_description:
-  8080/tcp: "Web UI (optional direct access)"
+  8080/tcp: "Web UI ingress proxy (do not map - use port 8088 for direct access)"
   7007/tcp: "Dozzle agent - map only if the built-in agent is enabled"
+  8088/tcp: "Direct web access - map this port when enable_direct_access is true"
 
 docker_api: true
 hassio_api: true
@@ -53,6 +55,7 @@ options:
   enable_agent: false
   agent_hostname: ""
   remote_agents: ""
+  enable_direct_access: false
 
 schema:
   log_level: list(trace|debug|info|warn|error|fatal)
@@ -62,6 +65,7 @@ schema:
   enable_agent: bool
   agent_hostname: str?
   remote_agents: str?
+  enable_direct_access: bool
 
 # stable: visible in the catalogue without requiring advanced mode (transitioning in Supervisor)
 stage: stable

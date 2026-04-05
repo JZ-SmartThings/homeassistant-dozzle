@@ -1,6 +1,7 @@
 network:
-  8080/tcp: "Direct access to the web UI - optional (Ingress sidebar is the default)."
+  8080/tcp: "Ingress proxy - do not map directly, use port 8088 for external access."
   7007/tcp: "Dozzle agent port - map this only when 'Built-in agent' option is enabled."
+  8088/tcp: "Direct web access - map this port when 'Enable direct access' option is on."
 
 configuration:
   log_level:
@@ -33,3 +34,10 @@ configuration:
       Comma-separated list of host:port pointing to Dozzle agents running on
       OTHER machines (e.g. 192.168.1.10:7007,192.168.1.20:7007).
       Those containers will appear alongside HA containers in this add-on.
+  enable_direct_access:
+    name: "Enable direct access (port 8088)"
+    description: >
+      Exposes Dozzle on port 8088 without the Ingress token prefix, so you can
+      reach it directly via http://your-ha-ip:8088/.
+      Map port 8088 in the Network tab to activate.
+      Ingress continues to work normally alongside this.

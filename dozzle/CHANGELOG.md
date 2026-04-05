@@ -6,6 +6,14 @@ A copy also lives at the repository root: [`CHANGELOG.md`](../CHANGELOG.md).
 
 ---
 
+## 0.2.0 - 2026-04-06
+
+- **New option `enable_direct_access`:** expose Dozzle on port 8088 for direct browser access without the Ingress token prefix. When enabled, a second Dozzle instance starts on `:8082` with `--base /`; nginx serves it on `:8088` without the ingress rewrite. Map port 8088 in the Network tab to use it. Ingress continues to work normally alongside this.
+- **Fix direct port (blank page):** root cause documented - the ingress nginx rewrite adds the token prefix, but asset URLs in the HTML already contain the token, so subsequent requests double-prefix and return 404. The new separate-port architecture avoids this entirely.
+- **New port `8088/tcp`:** added to manifest and translations (fr/en).
+
+---
+
 ## 0.1.9 - 2026-04-06
 
 - **Fix nginx:** restore `user root;` - reverts 0.1.7/0.1.8 attempts; `initgroups(root, 0) failed` is a harmless cosmetic log line (nginx is already root, no privilege drop occurs); the `chown()` fatal error only happens without `user root;`.

@@ -25,7 +25,9 @@ jobs:
       changed: ${{ steps.filter.outputs.changed }}
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
 
       - name: Get changed files
         id: changed_files
@@ -80,7 +82,7 @@ jobs:
       APP: dozzle
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: Get app information
         id: info
@@ -128,7 +130,7 @@ jobs:
       APP: dozzle
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           persist-credentials: false
 

@@ -1,33 +1,46 @@
-# Dozzle — Home Assistant App
-
 <div align="center">
 
-**Docker log viewer for Home Assistant** — full UI, **Ingress**, optional **Dozzle agent**.
+<img src="https://raw.githubusercontent.com/Erreur32/homeassistant-dozzle/main/dozzle/icon.png" alt="Dozzle" width="100" height="100">
 
-| | |
-| --- | --- |
-| **Project** | [github.com/Erreur32/homeassistant-dozzle](https://github.com/Erreur32/homeassistant-dozzle) |
-| **Manifest** | [`config.yaml`](config.yaml) |
-| **User guide** | [`DOCS.md`](DOCS.md) |
-| **Changelog** | [`CHANGELOG.md`](CHANGELOG.md) |
+# Dozzle — Home Assistant App
+
+**Real-time Docker log viewer — full UI, Ingress, optional agent**
+
+[![Release][release-shield]][release]
+![Project Stage][project-stage-shield]
+![Maintenance][maintenance-shield]
+[![License][license-shield]][license]
 
 </div>
 
 ---
 
-## Layout (2026 Apps)
+| | |
+|---|---|
+| **Version** | `0.1.0` |
+| **Dozzle binary** | `v10.2.1` |
+| **Architectures** | `amd64` · `aarch64` |
+| **Image** | `ghcr.io/erreur32/homeassistant-dozzle` |
+| **Ingress** | ✅ Sidebar, no extra login |
+| **Docker API** | ✅ Required (`docker_api: true`) |
+| **Protection mode** | ❌ Must be **disabled** |
 
-This folder follows the [Home Assistant App layout](https://developers.home-assistant.io/docs/apps/configuration): **`Dockerfile`**, **`rootfs/`**, **`translations/`**. No legacy `build.yaml` — image base and labels live in the Dockerfile (BuildKit / [builder migration](https://developers.home-assistant.io/blog/2026/04/02/builder-migration)).
+---
 
-```
-dozzle/
-├── config.yaml
-├── Dockerfile
-├── rootfs/
-├── translations/
-├── DOCS.md
-├── CHANGELOG.md
-└── README.md   ← you are here
-```
+## Quick start
 
-For installation and options, start with the [repository README](../README.md) or [`DOCS.md`](DOCS.md).
+1. Add the [repository](https://github.com/Erreur32/homeassistant-dozzle) in **Settings → Apps → Repositories**
+2. Install **Dozzle** — do **not** start it yet
+3. **Disable Protection mode** on the add-on page
+4. Click **Start** → open **Dozzle** from the sidebar
+
+Full documentation: [`DOCS.md`](DOCS.md) · Release history: [`CHANGELOG.md`](CHANGELOG.md)
+
+---
+
+[release-shield]: https://img.shields.io/badge/version-v0.1.0-blue.svg
+[release]: https://github.com/Erreur32/homeassistant-dozzle/releases/tag/v0.1.0
+[project-stage-shield]: https://img.shields.io/badge/project%20stage-stable-green.svg
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2026.svg
+[license-shield]: https://img.shields.io/badge/license-MIT-blue.svg
+[license]: https://github.com/Erreur32/homeassistant-dozzle/blob/main/LICENSE

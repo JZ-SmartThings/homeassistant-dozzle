@@ -10,12 +10,11 @@ FROM amir20/dozzle:${DOZZLE_VERSION} AS dozzle_upstream
 
 FROM ${BUILD_FROM}
 
-ARG BUILD_VERSION=0.1.2
+ARG BUILD_VERSION=0.1.3
 ARG BUILD_ARCH=amd64
 
 RUN apk add --no-cache jq curl nginx \
-    && rm -f /etc/nginx/http.d/default.conf \
-    && mkdir -p /var/lib/nginx/tmp /run/nginx
+    && rm -f /etc/nginx/http.d/default.conf
 
 COPY --from=dozzle_upstream /dozzle /usr/local/bin/dozzle
 RUN chmod +x /usr/local/bin/dozzle

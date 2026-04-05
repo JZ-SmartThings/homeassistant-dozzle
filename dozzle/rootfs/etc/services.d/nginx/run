@@ -7,5 +7,9 @@
 #   • JS shim injected in <head> (rewrites fetch/XHR/WebSocket at runtime)
 # ==============================================================================
 
+# Create temp dirs nginx needs (all under /tmp — always writable)
+mkdir -p /tmp/nginx_client /tmp/nginx_proxy
+
 bashio::log.info "nginx: starting on :8080 (→ Dozzle :8081)"
-exec nginx -g 'daemon off;'
+# -e /dev/stderr: redirect early startup log before config is parsed
+exec nginx -g 'daemon off;' -e /dev/stderr

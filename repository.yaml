@@ -1,4 +1,4 @@
 # Home Assistant app repository (Settings → Apps). App folder: dozzle/
 name: "HA Dozzle"
-url: "https://github.com/Erreur32/homeassistant-dozzle"
+url: "https://github.com/JZ-SmartThings/homeassistant-dozzle"
 maintainer: "Erreur32"

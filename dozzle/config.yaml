@@ -12,6 +12,11 @@ url: "https://github.com/Erreur32/homeassistant-dozzle"
 # For a local build without pulling: remove this line from a copy of the repository.
 image: ghcr.io/erreur32/homeassistant-dozzle
 
+map:
+  - name: data
+    read_only: False
+    target: /data
+
 arch:
   - amd64
   - aarch64

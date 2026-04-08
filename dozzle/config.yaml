@@ -13,7 +13,7 @@ url: "https://github.com/Erreur32/homeassistant-dozzle"
 image: ghcr.io/erreur32/homeassistant-dozzle
 
 map:
-  - name: data
+  - name: addon_config
     read_only: False
     target: /data
 
